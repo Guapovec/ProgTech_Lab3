@@ -1,0 +1,1 @@
+rootProject.name = "ProgTech_Lab3"
