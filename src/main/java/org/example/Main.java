@@ -16,110 +16,105 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 public class Main {
+    private static final String childrenDataPath = "src\\main\\resources\\illegitimate_children.txt";
+    private static final String anotherDataPath = "src\\main\\resources\\another_var.txt";
 
     private static final int WINDOW_HEIGHT = 700;
     private static final int WINDOW_WIDTH = 1100;
 
     private JFrame mainFrame;
 
+    private JPanel graphPanel;
+
+    private JTable table;
+    private DefaultTableModel tableModel;
+    private JScrollPane scrollPaneTable;
+
+    private JComboBox comboBox;
+    private final Object[] comboBoxData = {"внебрачные дети", "другой вариант"};
+
+    String[] columnNames = {"First", "Second"};
+    /*Object[][] data = {
+            {"Kathy", "Smith", "Snowboarding"},
+            {"John", "Doe", "Rowing"},
+            {"Sue", "Black", "Knitting"},
+            {"Jane", "White", "Speed reading"},
+            {"Joe", "Brown", "Pool"}
+    };*/
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Main().startUp());
     }
 
     private void startUp() {
-
+        // инициализация главного окна
         mainFrame = new JFrame("Статистика");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setBounds(150,150,WINDOW_WIDTH,WINDOW_HEIGHT);
-
-        JPanel graphPanel = createDemoPanel();
-        mainFrame.add(graphPanel);
+        // инициализация компонентов
+        setGraphPanel();
+        setTable();
+        setComboBox();
+        // контейнер для выбора данных
+        JPanel chooseDataPanel = new JPanel();
+        JLabel chooseDataLabel = new JLabel("Выберите данные:");
+        chooseDataPanel.add(chooseDataLabel);
+        chooseDataPanel.add(comboBox);
+        // контейнер для таблицы и выбора данных
+        JPanel gridBag = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.weighty = 1;
+        c.anchor = GridBagConstraints.SOUTH;
+        c.insets = new Insets(0,20,20,0);
+        c.gridx = 0;
+        c.gridy = 0;
+        gridBag.add(chooseDataPanel, c);
+        c.gridy = 1;
+        gridBag.add(scrollPaneTable, c);
+        // добаление компонентов на главное окно
+        mainFrame.add(graphPanel, BorderLayout.EAST);
+        mainFrame.add(gridBag, BorderLayout.WEST);
 
         mainFrame.setVisible(true);
     }
 
-    private XYDataset createDataset()
-    {
-        TimeSeries s1 = new TimeSeries("График №1");
-        s1.add(new Year(2009), 24.6);
-        s1.add(new Year(2010), 24.9);
-        s1.add(new Year(2011), 24.6);
-        s1.add(new Year(2012), 24.4);
-        s1.add(new Year(2013), 23.8);
-        s1.add(new Year(2014), 23.0);
-        s1.add(new Year(2015), 21.8);
-        s1.add(new Year(2016), 21.2);
-        s1.add(new Year(2017), 21.0);
-        s1.add(new Year(2018), 22.2);
-        s1.add(new Year(2019), 22.9);
-        s1.add(new Year(2020), 23.6);
-        s1.add(new Year(2021), 23.6);
-        s1.add(new Year(2022), 24.2);
-        s1.add(new Year(2023), 24.4);
-
-        TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(s1);
-
-        return dataset;
+    public void setGraphPanel() {
+        graphPanel = new GraphChildren().createDemoPanel();
     }
 
-    private JFreeChart createChart(XYDataset dataset)
-    {
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(
-                "Количество внебрачных детей", // title
-                "",                                 // x-axis label
-                "",                                 // y-axis label
-                dataset,                            // data
-                true,                               // create legend
-                true,                               // generate tooltips
-                false                               // generate URLs
-        );
-
-        chart.setBackgroundPaint(Color.white);
-
-        XYPlot plot = (XYPlot) chart.getPlot();
-        plot.setBackgroundPaint    (Color.lightGray);
-        plot.setDomainGridlinePaint(Color.white    );
-        plot.setRangeGridlinePaint (Color.white    );
-        plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-        plot.setDomainCrosshairVisible(true);
-        plot.setRangeCrosshairVisible(true);
-
-        XYItemRenderer r = plot.getRenderer();
-        if (r instanceof XYLineAndShapeRenderer) {
-            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
-            renderer.setBaseShapesVisible   (true);
-            renderer.setBaseShapesFilled    (true);
-            renderer.setDrawSeriesLineAsPath(true);
-        }
-
-        DateAxis axis = (DateAxis) plot.getDomainAxis();
-        axis.setDateFormatOverride(new SimpleDateFormat("yyyy"));
-
-        // Настройка формата для оси Y
-        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-
-        // Создаем DecimalFormat с символом процента
-        DecimalFormat percentFormat = new DecimalFormat("0.0'%'");
-        rangeAxis.setNumberFormatOverride(percentFormat);
-        rangeAxis.setTickUnit(new NumberTickUnit(0.5)); // шаг 0.5%
-
-        return chart;
+    public void setTable() {
+        tableModel = new DefaultTableModel(columnNames, 0);
+        table = new JTable(tableModel);
+        scrollPaneTable = new JScrollPane(table);
+        scrollPaneTable.setPreferredSize(new Dimension(400,500));
     }
 
-    public JPanel createDemoPanel()
-    {
-        JFreeChart chart = createChart(createDataset());
-        chart.setPadding(new RectangleInsets(4, 8, 2, 2));
-        ChartPanel panel = new ChartPanel(chart);
-        panel.setFillZoomRectangle(true);
-        panel.setMouseWheelEnabled(true);
-        panel.setPreferredSize(new Dimension(600, 300));
-        return panel;
+    public void setComboBox() {
+        comboBox = new JComboBox<>(comboBoxData);
+        comboBox.setSelectedIndex(-1);
+        comboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JComboBox cb = (JComboBox) e.getSource();
+                System.out.println("Выбранные данные: " + cb.getSelectedItem());
+                loadData(cb.getSelectedItem());
+            }
+        });
+    }
+
+    public void loadData(Object chosenData) {
+
     }
 }
