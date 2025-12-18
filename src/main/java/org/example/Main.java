@@ -1,5 +1,14 @@
 package org.example;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.ui.RectangleInsets;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -18,7 +27,7 @@ public class Main {
 
     private JFrame mainFrame;
 
-    private JPanel graphPanel;
+    private ChartPanel graphPanel;
 
     private JTable table;
     private DefaultTableModel tableModel;
@@ -64,7 +73,40 @@ public class Main {
     }
 
     public void setGraphPanel() {
-        graphPanel = new GraphChildren().createDemoPanel();
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        JFreeChart chart = ChartFactory.createTimeSeriesChart(
+                "", // title
+                "",                                 // x-axis label
+                "",                                 // y-axis label
+                dataset,                            // data
+                true,                               // create legend
+                true,                               // generate tooltips
+                false                               // generate URLs
+        );
+
+        chart.setBackgroundPaint(Color.white);
+
+        XYPlot plot = (XYPlot) chart.getPlot();
+        plot.setBackgroundPaint    (Color.lightGray);
+        plot.setDomainGridlinePaint(Color.white    );
+        plot.setRangeGridlinePaint (Color.white    );
+        plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+        plot.setDomainCrosshairVisible(true);
+        plot.setRangeCrosshairVisible(true);
+
+        XYItemRenderer r = plot.getRenderer();
+        if (r instanceof XYLineAndShapeRenderer) {
+            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
+            renderer.setBaseShapesVisible   (true);
+            renderer.setBaseShapesFilled    (true);
+            renderer.setDrawSeriesLineAsPath(true);
+        }
+
+        chart.setPadding(new RectangleInsets(4, 8, 2, 2));
+        graphPanel = new ChartPanel(chart);
+        graphPanel.setFillZoomRectangle(true);
+        graphPanel.setMouseWheelEnabled(true);
+        graphPanel.setPreferredSize(new Dimension(600, 300));
     }
 
     public void setTable() {
