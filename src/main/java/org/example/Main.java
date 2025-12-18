@@ -1,35 +1,17 @@
 package org.example;
 
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.NumberTickUnit;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
-import org.jfree.data.time.Year;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.ui.RectangleInsets;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 
 public class Main {
     private static final String childrenDataPath = "src\\main\\resources\\illegitimate_children.txt";
     private static final String anotherDataPath = "src\\main\\resources\\another_var.txt";
+
+    private static final String ILLEGITIMATE_CHILDREN_STR = "внебрачные дети";
+    private static final String ANOTHER_VAR_STR = "другой вариант";
 
     private static final int WINDOW_HEIGHT = 700;
     private static final int WINDOW_WIDTH = 1100;
@@ -43,16 +25,7 @@ public class Main {
     private JScrollPane scrollPaneTable;
 
     private JComboBox comboBox;
-    private final Object[] comboBoxData = {"внебрачные дети", "другой вариант"};
-
-    String[] columnNames = {"First", "Second"};
-    /*Object[][] data = {
-            {"Kathy", "Smith", "Snowboarding"},
-            {"John", "Doe", "Rowing"},
-            {"Sue", "Black", "Knitting"},
-            {"Jane", "White", "Speed reading"},
-            {"Joe", "Brown", "Pool"}
-    };*/
+    private final Object[] comboBoxData = {ILLEGITIMATE_CHILDREN_STR, ANOTHER_VAR_STR};
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Main().startUp());
@@ -95,7 +68,7 @@ public class Main {
     }
 
     public void setTable() {
-        tableModel = new DefaultTableModel(columnNames, 0);
+        tableModel = new DefaultTableModel();
         table = new JTable(tableModel);
         scrollPaneTable = new JScrollPane(table);
         scrollPaneTable.setPreferredSize(new Dimension(400,500));
@@ -108,13 +81,16 @@ public class Main {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox cb = (JComboBox) e.getSource();
-                System.out.println("Выбранные данные: " + cb.getSelectedItem());
-                loadData(cb.getSelectedItem());
+                String item = cb.getSelectedItem().toString();
+                System.out.println("Выбранные данные: " + item);
+
+                switch (item) {
+                    case ILLEGITIMATE_CHILDREN_STR:
+                        // загрузка данных вашего варианта
+                    case ANOTHER_VAR_STR:
+                        // загрузка данных вашего варианта
+                }
             }
         });
-    }
-
-    public void loadData(Object chosenData) {
-
     }
 }
