@@ -16,7 +16,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Main {
-    private static final String childrenDataPath = "src\\main\\resources\\illegitimate_children.txt";
     private static final String anotherDataPath = "src\\main\\resources\\another_var.txt";
 
     private static final String ILLEGITIMATE_CHILDREN_STR = "внебрачные дети";
@@ -28,6 +27,7 @@ public class Main {
     private JFrame mainFrame;
 
     private ChartPanel graphPanel;
+    TimeSeriesCollection dataset;
 
     private JTable table;
     private DefaultTableModel tableModel;
@@ -73,9 +73,9 @@ public class Main {
     }
 
     public void setGraphPanel() {
-        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        dataset = new TimeSeriesCollection();
         JFreeChart chart = ChartFactory.createTimeSeriesChart(
-                "", // title
+                "",                            // title
                 "",                                 // x-axis label
                 "",                                 // y-axis label
                 dataset,                            // data
@@ -128,7 +128,7 @@ public class Main {
 
                 switch (item) {
                     case ILLEGITIMATE_CHILDREN_STR:
-                        // загрузка данных вашего варианта
+                        new IllegitimateChildren(tableModel, dataset);
                     case ANOTHER_VAR_STR:
                         // загрузка данных вашего варианта
                 }
