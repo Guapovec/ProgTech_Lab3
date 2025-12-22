@@ -16,7 +16,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Main {
-    private static final String childrenDataPath = "src\\main\\resources\\illegitimate_children.txt";
     private static final String anotherDataPath = "src\\main\\resources\\another_var.txt";
 
     private static final String ILLEGITIMATE_CHILDREN_STR = "внебрачные дети";
@@ -28,6 +27,7 @@ public class Main {
     private JFrame mainFrame;
 
     private ChartPanel graphPanel;
+    TimeSeriesCollection dataset;
 
     private JTable table;
     private DefaultTableModel tableModel;
@@ -35,6 +35,8 @@ public class Main {
 
     private JComboBox comboBox;
     private final Object[] comboBoxData = {ILLEGITIMATE_CHILDREN_STR, ANOTHER_VAR_STR};
+
+    private JTextArea textArea;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Main().startUp());
@@ -49,33 +51,46 @@ public class Main {
         setGraphPanel();
         setTable();
         setComboBox();
+        setTextArea();
         // контейнер для выбора данных
         JPanel chooseDataPanel = new JPanel();
         JLabel chooseDataLabel = new JLabel("Выберите данные:");
         chooseDataPanel.add(chooseDataLabel);
         chooseDataPanel.add(comboBox);
         // контейнер для таблицы и выбора данных
-        JPanel gridBag = new JPanel(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.weighty = 1;
-        c.anchor = GridBagConstraints.SOUTH;
-        c.insets = new Insets(0,20,20,0);
-        c.gridx = 0;
-        c.gridy = 0;
-        gridBag.add(chooseDataPanel, c);
-        c.gridy = 1;
-        gridBag.add(scrollPaneTable, c);
+        JPanel leftGridBag = new JPanel(new GridBagLayout());
+        GridBagConstraints cL = new GridBagConstraints();
+        cL.weighty = 1;
+        cL.anchor = GridBagConstraints.SOUTH;
+        cL.insets = new Insets(0,20,0,0);
+        cL.gridx = 0;
+        cL.gridy = 0;
+        leftGridBag.add(chooseDataPanel, cL);
+        cL.insets = new Insets(0,20,20,0);
+        cL.gridy = 1;
+        leftGridBag.add(scrollPaneTable, cL);
+        // контейнер для графика и поля статистики
+        JPanel rightGridBag = new JPanel(new GridBagLayout());
+        GridBagConstraints cR = new GridBagConstraints();
+        cR.weighty = 1;
+        cR.insets = new Insets(20,0,20,20);
+        cR.gridx = 0;
+        cR.gridy = 0;
+        rightGridBag.add(graphPanel, cR);
+        cR.insets = new Insets(0,0,20,20);
+        cR.gridy = 1;
+        rightGridBag.add(textArea, cR);
         // добаление компонентов на главное окно
-        mainFrame.add(graphPanel, BorderLayout.EAST);
-        mainFrame.add(gridBag, BorderLayout.WEST);
+        mainFrame.add(rightGridBag, BorderLayout.EAST);
+        mainFrame.add(leftGridBag, BorderLayout.WEST);
 
         mainFrame.setVisible(true);
     }
 
     public void setGraphPanel() {
-        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        dataset = new TimeSeriesCollection();
         JFreeChart chart = ChartFactory.createTimeSeriesChart(
-                "", // title
+                "",                            // title
                 "",                                 // x-axis label
                 "",                                 // y-axis label
                 dataset,                            // data
@@ -106,7 +121,7 @@ public class Main {
         graphPanel = new ChartPanel(chart);
         graphPanel.setFillZoomRectangle(true);
         graphPanel.setMouseWheelEnabled(true);
-        graphPanel.setPreferredSize(new Dimension(600, 300));
+        graphPanel.setPreferredSize(new Dimension(600, 400));
     }
 
     public void setTable() {
@@ -128,11 +143,17 @@ public class Main {
 
                 switch (item) {
                     case ILLEGITIMATE_CHILDREN_STR:
-                        // загрузка данных вашего варианта
+                        new IllegitimateChildren(tableModel, dataset, textArea);
                     case ANOTHER_VAR_STR:
                         // загрузка данных вашего варианта
                 }
             }
         });
+    }
+
+    public void setTextArea() {
+        textArea = new JTextArea();
+        textArea.setPreferredSize(new Dimension(400, 200));
+        textArea.setEditable(false);
     }
 }

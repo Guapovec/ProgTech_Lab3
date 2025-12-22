@@ -91,7 +91,7 @@ public class GraphChildren {
         return chart;
     }
 
-    public JPanel createDemoPanel()
+    public ChartPanel createDemoPanel()
     {
         JFreeChart chart = createChart(createDataset());
         chart.setPadding(new RectangleInsets(4, 8, 2, 2));
