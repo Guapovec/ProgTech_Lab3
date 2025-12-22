@@ -17,7 +17,7 @@ import java.awt.event.ActionListener;
 
 public class Main {
     private static final String ILLEGITIMATE_CHILDREN_STR = "внебрачные дети";
-    private static final String ANOTHER_VAR_STR = "другой вариант";
+    private static final String ANOTHER_VAR_STR = "потребительские расходы";
 
     private static final int WINDOW_HEIGHT = 700;
     private static final int WINDOW_WIDTH = 1100;
@@ -142,8 +142,10 @@ public class Main {
                 switch (item) {
                     case ILLEGITIMATE_CHILDREN_STR:
                         new IllegitimateChildren(tableModel, dataset, textArea);
+                        break;
                     case ANOTHER_VAR_STR:
-
+                        new ConsumerSpending(tableModel, dataset, textArea);
+                        break;
                 }
             }
         });
