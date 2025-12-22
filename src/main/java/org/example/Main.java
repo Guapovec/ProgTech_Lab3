@@ -16,8 +16,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Main {
-    private static final String anotherDataPath = "src\\main\\resources\\another_var.txt";
-
     private static final String ILLEGITIMATE_CHILDREN_STR = "внебрачные дети";
     private static final String ANOTHER_VAR_STR = "другой вариант";
 
@@ -145,7 +143,7 @@ public class Main {
                     case ILLEGITIMATE_CHILDREN_STR:
                         new IllegitimateChildren(tableModel, dataset, textArea);
                     case ANOTHER_VAR_STR:
-                        // загрузка данных вашего варианта
+
                 }
             }
         });
