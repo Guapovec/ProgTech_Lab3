@@ -18,12 +18,14 @@ public class IllegitimateChildren {
 
     private DefaultTableModel tableModel;
     private TimeSeriesCollection dataset;
+    private JTextArea textArea;
 
     private List<Object[]> data = new ArrayList<>();
 
-    public IllegitimateChildren(DefaultTableModel tableModel, TimeSeriesCollection dataset) {
+    public IllegitimateChildren(DefaultTableModel tableModel, TimeSeriesCollection dataset, JTextArea textArea) {
         this.tableModel = tableModel;
         this.dataset = dataset;
+        this.textArea = textArea;
         loadData();
     }
 
@@ -31,6 +33,7 @@ public class IllegitimateChildren {
         loadDataFromFile();
         setGraphData();
         setTableData();
+        setTextAreaData();
     }
 
     public void loadDataFromFile() {
@@ -96,5 +99,23 @@ public class IllegitimateChildren {
         for (Object[] row : data) {
             tableModel.addRow(row);
         }
+    }
+
+    public void setTextAreaData() {
+        double max = 0;
+        double min = 100;
+        for (int i = 1; i < data.size(); i++) {
+            double diff = Math.abs(
+                            Double.parseDouble(data.get(i)[1].toString()) -
+                            Double.parseDouble(data.get(i-1)[1].toString())
+                          );
+            if (diff > max) max = diff;
+            if (diff < min) min = diff;
+        }
+
+        String text = String.format("Максимальное изменение: %.1f%%\n" +
+                                     "Минимальное изменение: %.1f%%", max, min);
+
+        textArea.setText(text);
     }
 }
